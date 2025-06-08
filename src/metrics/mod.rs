@@ -29,3 +29,15 @@ pub fn f1_score<T: Eq>(y_true: &[T], y_pred: &[T], labels: Vec<T>, pos_label: Op
         _ => numberator / denominator,
     }
 }
+pub fn cosine_similarity(a: &Vec<f64>, b: &Vec<f64>) -> f64 {
+    assert_eq!(a.len(), b.len(), "Vectors must be of the same length");
+    let dot_product: f64 = a.iter().zip(b.iter()).map(|(x, y)| x * y).sum();
+    let norm_a: f64 = a.iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
+    let norm_b: f64 = b.iter().map(|x| x.powi(2)).sum::<f64>().sqrt();
+    
+    if norm_a == 0.0 || norm_b == 0.0 {
+        return 0.0; // Avoid division by zero
+    }
+    
+    dot_product / (norm_a * norm_b)
+}
