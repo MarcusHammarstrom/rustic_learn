@@ -5,8 +5,24 @@ pub struct KnnClassifier<'a> {
     y_train: &'a Vec<String>,
     k: u32,
 }
-impl KnnClassifier<'_> {
-    fn predict(&self, x_test: &Vec<Vec<f64>>) -> Vec<String> {
+impl<'a> KnnClassifier<'a> {
+    pub fn new(x_train: &'a Vec<Vec<f64>>, y_train: &'a Vec<String>, k: u32) -> KnnClassifier<'a> {
+        if k == 0 {
+            panic!("k must be greater than 0");
+        }
+        if x_train.is_empty() || y_train.is_empty() {
+            panic!("Training data cannot be empty");
+        }
+        if x_train.len() != y_train.len() {
+            panic!("Number of training samples and labels must match");
+        }
+        KnnClassifier {
+            x_train,
+            y_train,
+            k,
+        }
+    }
+    pub fn predict(&self, x_test: &Vec<Vec<f64>>) -> Vec<String> {
         let mut predictions = Vec::with_capacity(x_test.len());
 
         for test_sample in x_test {

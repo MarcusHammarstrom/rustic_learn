@@ -1,4 +1,8 @@
-mod fn train_test_split<T: Clone, U: Clone>(x: &Vec<Vec<T>>, y: &Vec<U>, test_ratio: Option<f32>, random_seed: Option<u64>) -> (Vec<Vec<T>>, Vec<U>, Vec<Vec<T>>, Vec<U>) {
+use rand::rngs::StdRng;
+use rand::{ SeedableRng };
+use rand::prelude::SliceRandom;
+
+pub fn train_test_split<T: Clone, U: Clone>(x: &Vec<Vec<T>>, y: &Vec<U>, test_ratio: Option<f64>, random_seed: Option<u64>) -> (Vec<Vec<T>>, Vec<U>, Vec<Vec<T>>, Vec<U>) {
     assert_eq!(x.len(), y.len(), "Features and labels must have the same length");
     
     let ratio = match test_ratio {
@@ -13,7 +17,7 @@ mod fn train_test_split<T: Clone, U: Clone>(x: &Vec<Vec<T>>, y: &Vec<U>, test_ra
         None => StdRng::from_entropy(), // Use a random seed if not provided
     };
     let n_samples = x.len();
-    let n_test = (n_samples as f32 * ratio).round() as usize;
+    let n_test = (n_samples as f64 * ratio).round() as usize;
 
     let mut indices = (0..n_samples).collect::<Vec<usize>>();
 
