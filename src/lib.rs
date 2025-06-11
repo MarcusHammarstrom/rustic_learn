@@ -3,3 +3,4 @@ pub mod classifiers;
 pub mod model_selection;
 pub mod datasets;
 pub mod regressors;
+pub mod preprocessing;

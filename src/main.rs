@@ -2,6 +2,7 @@ use rustic_learn::classifiers::KnnClassifier;
 use rustic_learn::regressors::LinearRegression;
 use rustic_learn::datasets::{load_boston_housing, load_iris};
 use rustic_learn::model_selection::train_test_split;
+use rustic_learn::preprocessing::{standard_scale, min_max_scale};
 
 fn main() {
     let (x, y) = load_iris();
@@ -19,6 +20,7 @@ fn main() {
     let accuracy = correct / total as f64;
     println!("Accuracy: {:.2}%", accuracy * 100.0);
     let (x, y) = load_boston_housing();
+    let scaled_x = min_max_scale(&x);
     let (x_train, y_train, x_test, y_test) = train_test_split(&x, &y, Some(0.2), None);
     let mut regressor = LinearRegression::new();
     regressor.fit(&x_train, &y_train);
