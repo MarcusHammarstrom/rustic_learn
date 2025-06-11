@@ -1,5 +1,51 @@
 use nalgebra::{DMatrix};
+use super::metrics::distance_functions::euclidean_distance;
 
+pub struct KnnRegression<'a> {
+    x_train: &'a Vec<Vec<f64>>,
+    y_train: &'a Vec<f64>,
+    k: u32,
+}
+impl<'a> KnnRegression<'a> {
+    pub fn new(x_train: &'a Vec<Vec<f64>>, y_train: &'a Vec<f64>, k: u32) -> KnnRegression<'a> {
+        if k == 0 {
+            panic!("k must be greater than 0");
+        }
+        if x_train.is_empty() || y_train.is_empty() {
+            panic!("Training data cannot be empty");
+        }
+        if x_train.len() != y_train.len() {
+            panic!("Number of training samples and labels must match");
+        }
+        KnnRegression {
+            x_train,
+            y_train,
+            k,
+        }
+    }
+    pub fn predict(&self, x_test: &Vec<Vec<f64>>) -> Vec<f64> {
+        let mut predictions = Vec::with_capacity(x_test.len());
+
+        for test_sample in x_test {
+            let mut distances: Vec<(f64, f64)> = Vec::with_capacity(self.x_train.len());
+            
+            for (train_sample, &label) in self.x_train.iter().zip(self.y_train.iter()) {
+                let distance = euclidean_distance(&test_sample, train_sample);
+                distances.push((distance, label));
+            }
+
+            distances.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+            
+            let mut sum = 0.0;
+            for i in 0..self.k as usize {
+                sum += distances[i].1;
+            }
+            let prediction = sum / self.k as f64;
+            predictions.push(prediction);
+        }
+        predictions
+    }
+}
 pub struct LinearRegression {
     coefficients: Option<Vec<f64>>,
 }
